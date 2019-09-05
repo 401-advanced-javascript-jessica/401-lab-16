@@ -1,6 +1,6 @@
 'use strict';
 
-const EventEmitter = require('events');
+const EventEmitter = require('src/events');
 
 const events = new EventEmitter();
 

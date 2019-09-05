@@ -1,4 +1,4 @@
-'USE STRICT'
+'use strict';
 
-CONSOLE.LOG('TEST FILE');
+console.log('test file');
 
