@@ -1,41 +1,65 @@
-'use strict';
-
-const fs = require('fs');
-const util = require('util');
+'use strict'
 
 const events = require('./events.js');
-events.on('read', readFile);
-events.on('change case', upperCase);
-events.on('write', writeFile);
+const util = require('util');
+const fs = require('fs');
 
-const readFile = (file) => {
-    fs.readFile(file, (err, data) => {
-        if (err) {
-            throw err;
-        }
-        events.emit('file-update', { file: file });
+// const alterFile = (file) => {
+//   fs.readFile( file, (err, data) => {
+//     if(err) { throw err; }
+//     let text = data.toString().toUpperCase();
+//     console.log(text);
+//     fs.writeFile( file, Buffer.from(text), (err, data) => {
+//       if(err) { throw err; }
+//       console.log(`${file} saved`);
+//     });
+//   });
+// };
+
+
+const readFileAsync = util.promisify(fs.readFile);
+
+const read = async (file) => {
+    let fileData = await readFileAsync(file, (err, data) => {
+        if (err) {throw err;}
         return data;
     });
+    events.emit('upper-case', {file: file, data: fileData.toString()});
+
 };
 
-const upperCase = (data) => {
-    let text = data.toString().toUpperCase();
-    events.emit('file-update', { file: file });
-    return text;
+const upperCase = (object) => {
+    let fileData = object.data;
+    object.data = fileData.toUpperCase();
+    events.emit('write', object);
 };
 
-const writeFile = (text) => {
+const write = (object) => {
+    let file = object.file;
+    let text = object.data;
     fs.writeFile( file, Buffer.from(text), (err, data) => {
         if (err) {
             throw err;
         }
-        events.emit('file-update', { file: file });
-        console.log(`${file} saved`);
-    })
+        events.emit('cache-update', { saved: file });
+    });
 };
 
+events.on('read', read);
+events.on('upper-case', upperCase);
+events.on('write', write);
+
 module.exports = {
-    readFile,
-    upperCase,
-    writeFile,
+    // init: () => {
+    //     read(file)
+    //         .then( (fileData) => {
+    //             return upperCase(fileData)
+    //         })
+    //         .then((text) => {
+    //             console.log(file);
+    //             return write(text, file)
+    //         })
+    //         .catch(error => console.log(error));
+    // }
+    read: read,
 };
