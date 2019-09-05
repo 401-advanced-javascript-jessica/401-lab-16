@@ -2,13 +2,17 @@
   "name": "events-lab",
   "version": "1.0.0",
   "description": "Events Lab",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "test": "jest --verbose --coverage"
+    "jsdoc": "jsdoc -c ./docs/config/jsdoc.config.json",
+    "lint": "eslint \"**/*.js\"",
+    "start": "node index.js"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "jest": "^24.8.0"
+    "eslint": "^6.3.0",
+    "jest": "^24.8.0",
+    "jsdoc": "^3.6.3"
   }
 }
