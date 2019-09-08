@@ -1,4 +1,4 @@
-'use strict';
+'USE STRICT';
 
-console.log('test file');
+CONSOLE.LOG('A BUNCH OF LOWER CASE TEXT');
 

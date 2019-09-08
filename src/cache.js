@@ -5,6 +5,7 @@ const util = require('util');
 const fs = require('fs');
 
 const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 
 /**
  * @method read
@@ -12,10 +13,18 @@ const readFileAsync = util.promisify(fs.readFile);
  * @returns {Promise<void>}
  */
 const read = async (file) => {
-  let fileData = await readFileAsync(file, (err, data) => {
-    if (err) {throw err;}
-    return data;
-  });
+  let fileData;
+  try {
+    fileData = await readFileAsync(file);
+  } catch (err){
+    events.emit('error', { error: err});
+  }
+  // let fileData = await readFileAsync(file, (err, data) => {
+  //   if (err) {
+  //     events.emit('error', { error: err});
+  //   }
+  //   return data;
+  // });
   events.emit('upper-case', {file: file, data: fileData.toString()});
 
 };
@@ -34,12 +43,14 @@ const upperCase = (object) => {
  * @method write
  * @param object
  */
-const write = (object) => {
+const write = async (object) => {
+  console.log(object);
   let file = object.file;
+  console.log(file);
   let text = object.data;
-  fs.writeFile( file, Buffer.from(text), (err, data) => {
+  await fs.writeFile( file, Buffer.from(text), (err, data) => {
     if (err) {
-      throw err;
+      events.emit('error', { error: err});
     }
     events.emit('cache-update', { saved: file });
   });
